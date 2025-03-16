@@ -1,0 +1,16 @@
+{
+  "name": "backenddevtinder",
+  "version": "1.0.0",
+  "description": "This is the devtinder project",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "start":"node src/app.js"
+    
+  },
+  "author": "mouli vignesh",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
