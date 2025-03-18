@@ -2,28 +2,33 @@ const express=require("express");
  
 const app= express();
 
-app.get("/user",(req,res)=>{
-    res.send({
-        firstname:"mouli",
-        Lastname: "Vignesh"
-    })
+const {adminauth,userauth}=require("./Middlewares/Authen");
+
+
+//Write a dummy middleware for auth 
+
+app.use("/admin",adminauth);
+
+app.post("/user/login",(req,res)=>{
+    res.send("user login successfull");
 });
 
-app.delete("/user",(req,res)=>{
-    res.send("User is deleted successfully");
+app.get("/user/usedata",userauth,(req,res)=>{
+    res.send("user data is sent successfuy");
 });
 
-app.patch("/user",(req,res)=>{
-    res.send("User feild is updated successfully");
+
+
+
+app.get("/admin/GetAllData",(req,res)=>{
+    console.log('data sent successfully');
+    res.send("ALL Data is received sucessfully");
 });
 
-app.post("/user",(req,res)=>{
-   res.send("User data is saved successfullyy")
+app.get("/admin/getonedata",(req,res)=>{
+    res.send("getonedata sendsuccessfully");
 });
 
-app.use("/user",(req,res)=>{
-    res.send("home");
-});
 
 app.listen(3000,()=>{
     console.log("port is listening successfully")
