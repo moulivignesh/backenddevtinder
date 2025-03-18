@@ -6,28 +6,29 @@ const {adminauth,userauth}=require("./Middlewares/Authen");
 
 
 //Write a dummy middleware for auth 
+    app.use("/user",(req,res,next)=>{
+        
 
-app.use("/admin",adminauth);
-
-app.post("/user/login",(req,res)=>{
-    res.send("user login successfull");
-});
-
-app.get("/user/usedata",userauth,(req,res)=>{
-    res.send("user data is sent successfuy");
-});
-
+        try{
+            throw new Error("Something went wrong");
+            res.send("cde is good");
+        }catch(err){
+            res.status(500).send("you have error kindly check");
+        }
+        
+    });
 
 
 
-app.get("/admin/GetAllData",(req,res)=>{
-    console.log('data sent successfully');
-    res.send("ALL Data is received sucessfully");
-});
 
-app.get("/admin/getonedata",(req,res)=>{
-    res.send("getonedata sendsuccessfully");
-});
+
+//app.use is oneway of handling the error. best way is always try catch only 
+// app.use("/",(err,req,res,next)=>{
+   
+
+//     res.status(500).send("you have error kindly check");
+// })
+
 
 
 app.listen(3000,()=>{
