@@ -16,8 +16,47 @@ app.get("/feed",async (req,res)=>{
         res.send("error");
     }
    
-   
-   
+   });
+
+   app.patch("/UserUpdate/:id", async (req,res)=>{
+        try{
+            const id = req.params.id;
+            const data=req.body;
+            const allowedItems = ["firstName", "emailId", "password","skills", "lastName"];
+            const isAllowedItems = Object.keys(data).every((key) => allowedItems.includes(key));
+            console.log(isAllowedItems);
+            if (!isAllowedItems) {
+                console.log("IF block triggered – invalid key(s) found");
+                throw new Error("Invalid keys found in request body");
+              }
+              if(data.skills.length >10){
+                console.log("skilly cannot be more than 10");
+                throw new Error("skilly cannot be more than 10");
+              }
+            
+
+
+            // const data=req.body.emailId;
+            
+           const userupdate= await User.findByIdAndUpdate(id,data,{new: true,runValidators:true});
+           res.send("user is updated");
+
+
+        }catch(err){
+            res.status(400).send("eror user data is not valid check the nmae or email id");
+        }
+   })
+
+   app.delete("/DeleteUser", async (req,res)=>{
+    const idname=req.body;
+    try{
+       const userupdate= await User.findByIdAndDelete(idname);
+       res.send("user is deleted");
+
+
+    }catch(err){
+       res.status(400).send("error");
+    }
 })
 
 
@@ -50,7 +89,7 @@ app.post("/signup",async(req,res)=>{
         await UserInstance.save();
         res.send("User is saved successfully");
     }catch(err){
-     res.status(500).send("Error meaaseage");
+     res.status(500).send("Details are not update or Api not hiting the database");
     }
 
     
