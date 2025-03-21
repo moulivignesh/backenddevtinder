@@ -22,7 +22,7 @@ app.get("/feed",async (req,res)=>{
         try{
             const id = req.params.id;
             const data=req.body;
-            const allowedItems = ["firstName", "emailId", "password","skills", "lastName"];
+            const allowedItems = ["firstName", "emailId", "password","skills", "lastName","photoURL"];
             const isAllowedItems = Object.keys(data).every((key) => allowedItems.includes(key));
             console.log(isAllowedItems);
             if (!isAllowedItems) {

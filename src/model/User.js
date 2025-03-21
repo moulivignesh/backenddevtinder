@@ -1,6 +1,7 @@
 const { timeStamp } = require("console");
 const mongoose=require("mongoose");
 const { type } = require("os");
+const validator = require("validator");
 
 const userSchema=mongoose.Schema({
     firstName : {
@@ -17,9 +18,16 @@ const userSchema=mongoose.Schema({
     emailId :{
     type: String,
      trim: true,
-     minLength: 5,
+     minlength: 5,
      required:true,
      unique:true,
+     validate(value){
+       if(!validator.isEmail(value)) {
+        console.log("invalid email");
+        throw new Error("invalid email");
+       }
+     }
+     
 
     },
     password:{
@@ -28,6 +36,12 @@ const userSchema=mongoose.Schema({
      minLength: 5,
      required:true,
      unique:true,
+     validate(value){
+        if(!validator.isStrongPassword(value)) {
+         console.log("invalid password");
+         throw new Error("invalid password");
+        }
+      }
     },
     age:{
         type: String,
@@ -40,6 +54,12 @@ const userSchema=mongoose.Schema({
     photoURL:{
         type:String,
         default:"https://th.bing.com/th/id/OIP.k9vGN2Z7PEx31AlrMRPkYAHaHd?pid=ImgDet&w=182&h=183&c=7",
+        validate(value){
+            if(!validator.isURL(value)) {
+             console.log("photo url inavlid");
+             throw new Error("photo url inavlid");
+            }
+          }
 
     },
     about:{
