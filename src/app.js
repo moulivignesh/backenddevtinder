@@ -1,6 +1,10 @@
 const express=require("express");
 const {ConnectDB}=require("./Configuration/DBconnect");
 const {User}= require("./model/User");
+const {ValidateSingnupdata,validationemail}=require("./Utils.js/Validation");
+// const {bcrypt}= require("bcrypt");
+const bcrypt = require("bcryptjs");
+
 const app= express();
 
 app.use(express.json());
@@ -25,13 +29,13 @@ app.get("/feed",async (req,res)=>{
             const allowedItems = ["firstName", "emailId", "password","skills", "lastName","photoURL"];
             const isAllowedItems = Object.keys(data).every((key) => allowedItems.includes(key));
             console.log(isAllowedItems);
-            if (!isAllowedItems) {
-                console.log("IF block triggered – invalid key(s) found");
-                throw new Error("Invalid keys found in request body");
+             if (!isAllowedItems) {
+                
+                throw new Error("Inavalid key so kindly check the key");
               }
-              if(data.skills.length >10){
-                console.log("skilly cannot be more than 10");
-                throw new Error("skilly cannot be more than 10");
+              if (data.skills.length > 10) {
+                
+                throw new Error("Skills cannot be more than 10");
               }
             
 
@@ -42,9 +46,10 @@ app.get("/feed",async (req,res)=>{
            res.send("user is updated");
 
 
-        }catch(err){
-            res.status(400).send("eror user data is not valid check the nmae or email id");
-        }
+        }catch (err) {
+            
+            res.status(400).send(err.message || "User data is not valid");
+          }
    })
 
    app.delete("/DeleteUser", async (req,res)=>{
@@ -83,18 +88,57 @@ app.get("/feed",async (req,res)=>{
 // })
 
 app.post("/signup",async(req,res)=>{
-    //how to post the data(logic we need to write here)
-    const UserInstance=new User(req.body);
+    //Validate the user who is registering
+    //password hashing
+    //Create a User instance and save it
+   
+    const {firstName,lastName,emailId,password}=req.body;
+   const passwordHash=await bcrypt.hash(password, 10);
+   console.log(passwordHash);
+
+    
+    const UserInstance=new User(
+        {firstName,
+        lastName,
+        emailId,
+        password: passwordHash});
+
     try{
+        ValidateSingnupdata(req);
         await UserInstance.save();
         res.send("User is saved successfully");
     }catch(err){
-     res.status(500).send("Details are not update or Api not hiting the database");
+        res.status(400).send(err.message || "User data is not valid");
     }
 
     
     
 })
+
+app.post("/login",async (req,res)=>{
+    const {emailId,password}=req.body;
+    try{
+        
+         console.log(validationemail(emailId));
+         const IsemailPresentInDbgetuser= await User.findOne({emailId});
+        
+         if(!IsemailPresentInDbgetuser){
+            throw new Error("user is not availabe in our DB");
+         }
+         const IspasswordValid=await bcrypt.compare(password, IsemailPresentInDbgetuser.password);
+         if(IspasswordValid){
+           res.send("user logged in");
+         }else{
+            throw new Error("pls check the assword");
+         }
+    }
+    catch(err){
+        res.status(400).send(err.message || "invalid crendials");
+    }
+
+})
+
+
 ConnectDB().then(()=>{
     console.log("db connect is successfully completed");
     app.listen(3000,()=>{

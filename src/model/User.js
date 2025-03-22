@@ -38,7 +38,7 @@ const userSchema=mongoose.Schema({
      unique:true,
      validate(value){
         if(!validator.isStrongPassword(value)) {
-         console.log("invalid password");
+         
          throw new Error("invalid password");
         }
       }
@@ -56,7 +56,7 @@ const userSchema=mongoose.Schema({
         default:"https://th.bing.com/th/id/OIP.k9vGN2Z7PEx31AlrMRPkYAHaHd?pid=ImgDet&w=182&h=183&c=7",
         validate(value){
             if(!validator.isURL(value)) {
-             console.log("photo url inavlid");
+             
              throw new Error("photo url inavlid");
             }
           }
