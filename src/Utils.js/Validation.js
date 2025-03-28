@@ -24,6 +24,14 @@ const ValidateSingnupdata=(req)=>{
 
 }
 
+const ValidateEditprofile=(req)=>{
+    const allowedfields =["firstName","lastName","skills","age","photoURL"];
+
+   const IsValidfileds= Object.keys(req.body).every((key)=>allowedfields.includes(key));//return true or false
+
+   return IsValidfileds;
+}
+
 const validationemail=(emailId)=>{
 
     if(!validator.isEmail(emailId)){
@@ -34,5 +42,6 @@ const validationemail=(emailId)=>{
 module.exports =
 {
     ValidateSingnupdata,
-    validationemail
+    validationemail,
+    ValidateEditprofile
 }

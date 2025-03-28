@@ -1,12 +1,15 @@
 const express=require("express");
 const {ConnectDB}=require("./Configuration/DBconnect");
-const {User}= require("./model/User");
-const {ValidateSingnupdata,validationemail}=require("./Utils.js/Validation");
+const AuthRouter=require("../src/Routers/Auth");
+const ProfileRouter=require("../src/Routers/Profile");
+const RequestRouter=require("../src/Routers/request");
+
+
+
 // const {bcrypt}= require("bcrypt");
-const bcrypt = require("bcryptjs");
+
 const cookieParser = require("cookie-parser");
-const jwt = require('jsonwebtoken');
-const {AuthToken}=require("../src/Middlewares/Authen");
+
 
 const app= express();
 
@@ -91,83 +94,13 @@ app.use(cookieParser());
 
 // })
 
-app.post("/signup",async(req,res)=>{
-    //Validate the user who is registering
-    //password hashing
-    //Create a User instance and save it
-   
-    const {firstName,lastName,emailId,password}=req.body;
-   const passwordHash=await bcrypt.hash(password, 10);
-   
 
-    
-    const UserInstance=new User(
-        {firstName,
-        lastName,
-        emailId,
-        password: passwordHash});
+app.use("/",AuthRouter);
 
-    try{
-        ValidateSingnupdata(req);
-        await UserInstance.save();
-        res.send("User is saved successfully");
-    }catch(err){
-        res.status(400).send(err.message || "User data is not valid");
-    }
+app.use("/",ProfileRouter);
 
-    
-    
-});
+app.use("/",RequestRouter);
 
-app.post("/SendConnectionRequest",AuthToken, async(req,res)=>{
-    const user=req.userprofile;
-    console.log("connection request sent");
-    res.send(user.firstName +"connection request sent");
-
-})
-
-app.post("/login",async (req,res)=>{
-    const {emailId,password}=req.body;
-    try{
-        
-         console.log(validationemail(emailId));
-         const IsemailPresentInDbgetuser= await User.findOne({emailId});
-        
-         if(!IsemailPresentInDbgetuser){
-            throw new Error("user is not availabe in our DB");
-         }
-         const IspasswordValid=await IsemailPresentInDbgetuser.ValidatePassword(password);
-         if(IspasswordValid){
-            //Creating the JSON WEB TOKEN(JWT)
-            const token=await IsemailPresentInDbgetuser.getJWT();
-            //add token to cookie and send it to browseer
-            res.cookie("token",token);
-           res.send("user logged in");
-         }else{
-            throw new Error("pls check the assword");
-         }
-    }
-    catch(err){
-        res.status(400).send(err.message || "invalid crendials");
-    }
-
-});
-
-app.get("/profile", AuthToken,async (req,res)=>{
-
-    try{ 
-
-        const userprofile =req.userprofile;
-
-         res.send(userprofile);
-      }
-    catch(err)
-    {
-        res.status(400).send(err.message || "invalid crendials for logined use please login again");
-    }
-
-
-});
 
 
 ConnectDB().then(()=>{

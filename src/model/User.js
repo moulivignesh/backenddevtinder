@@ -45,7 +45,7 @@ const userSchema=mongoose.Schema({
         }
       }
     },
-    age:{
+    gender:{
         type: String,
         validate(value){
             if(!["male","Female","others"].includes(value)){
@@ -87,7 +87,7 @@ userSchema.methods.getJWT=async function(){
 }
 
 userSchema.methods.ValidatePassword=async function(passwordInputbyuser){
-    const user=this;
+    const user=this;//here this describes the instance of that one single user in db eg:-- test 1 user
     const passwaordHash=user.password;
    const IspasswordValid= await bcrypt.compare(passwordInputbyuser, passwaordHash);
    return IspasswordValid;
