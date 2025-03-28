@@ -136,10 +136,10 @@ app.post("/login",async (req,res)=>{
          if(!IsemailPresentInDbgetuser){
             throw new Error("user is not availabe in our DB");
          }
-         const IspasswordValid=await bcrypt.compare(password, IsemailPresentInDbgetuser.password);
+         const IspasswordValid=await IsemailPresentInDbgetuser.ValidatePassword(password);
          if(IspasswordValid){
             //Creating the JSON WEB TOKEN(JWT)
-            const token = jwt.sign({_id:IsemailPresentInDbgetuser.id}, 'Mouli@123');
+            const token=await IsemailPresentInDbgetuser.getJWT();
             //add token to cookie and send it to browseer
             res.cookie("token",token);
            res.send("user logged in");
